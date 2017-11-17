@@ -10,16 +10,21 @@ class Node(object):
         self.script = script
         self.choices = choices
 
-    def text(self):
-        print(self.script, end="\n\n")
-        if len(self.choices)>0:
+    def print_choices(self):
+        print(self.script, end="\n")
+
+        if len(self.choices) > 1:
             for i in range(len(self.choices)):
                 print("{}. {}".format(i+1,self.choices[i][1]), end="\n")
+        elif len(self.choices) == 1:
+            print(self.choices[0][1], end="\n")
         else:
             print("Game Over.\n")
 
     def choose(self, userinput):
-        if self.choices != []:
+        if len(self.choices) == 1:
+            return self.choices[0][0]
+        elif len(self.choices) != 0:
             return self.choices[int(userinput)-1][0]
         else:
             quit()
@@ -39,7 +44,7 @@ def loadnodes(filename):
             choicelist = []
             try:
                 item = file.pop(0).split(' ', 1)
-                while item != ['\n'] and item != ['eof']:   # Newline that shows end of that section
+                while item != ['\n']:   # Newline that shows end of that section
                     choicelist.append([item[0][:-1], item[1]])
                     item = file.pop(0).split(' ', 1)
             except (IndexError):
@@ -48,7 +53,7 @@ def loadnodes(filename):
             nodedict[title] = Node(text, choicelist)
     return nodedict, firstnode
 
-def clear():
+def clear(error=""):
     import platform
     import os
     if platform.system() == 'Windows':
@@ -56,19 +61,20 @@ def clear():
     else:
         _=os.system('clear')
 
+    if error: print(error)
+
 def init(filename):
     nodedict, firstnode = loadnodes(filename)
     currentnode = nodedict[firstnode]
-
-
+    clear("Welcome to the game. Type a number of your choice and press 'Enter' to continue. Press Ctrl+C at any time to quit.\n-----\n")
 
     while 1<2:
-        clear()
-        currentnode.text()
+        currentnode.print_choices()
         try:
             currentnode = nodedict[currentnode.choose(input())]
+            clear()
         except Exception as e:
-            print("-----\nTry again.")
+            clear(error="-----\nIncorrect entry, try again...")
         print("-----")
 
 
