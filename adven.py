@@ -37,10 +37,14 @@ def loadnodes(filename):
         if item != ['\n']: # Indicates newline that we can skip
             title, text = item[0][:-1], item[1]
             choicelist = []
-            item = file.pop(0).split(' ', 1)
-            while item != ['\n'] and item != ['eof']:   # Newline that shows end of that section
-                choicelist.append([item[0][:-1], item[1]])
+            try:
                 item = file.pop(0).split(' ', 1)
+                while item != ['\n'] and item != ['eof']:   # Newline that shows end of that section
+                    choicelist.append([item[0][:-1], item[1]])
+                    item = file.pop(0).split(' ', 1)
+            except (IndexError):
+                nodedict[title] = Node(text, choicelist)
+
             nodedict[title] = Node(text, choicelist)
     return nodedict, firstnode
 
