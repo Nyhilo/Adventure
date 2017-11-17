@@ -19,7 +19,7 @@ class Node(object):
         elif len(self.choices) == 1:
             print(self.choices[0][1], end="\n")
         else:
-            print("Game Over.\n")
+            print("Game Over.")
 
     def choose(self, userinput):
         if len(self.choices) == 1:
@@ -77,19 +77,24 @@ def init(filename):
             clear(error="-----\nIncorrect entry, try again...")
         print("-----")
 
-
+Usage = """
+        \n\tUsage: [py|python3] adven.py [FILENAME] <-d |-debug>\n
+        The -debug argument will print a list of all nodes in the source file.
+        """
 
 def main():
     import sys
     if len(sys.argv) == 1:
-        print("Please provide a filename.")
+        print(Usage)
+
     elif len(sys.argv) > 2:
         if sys.argv[2] == "-d" or sys.argv[2] == "-debug":
-            nodedict, firstnode = loadnodes("adven.txt")
-            for key, node in nodedict:
-                print("Node Name: {}\nText: {}".format(key, node.script))
+            nodedict, firstnode = loadnodes(sys.argv[1])
+            for key, node in nodedict.items():
+                print("Node Name: {}\nText: {}Choices:".format(key, node.script))
                 for choice in node.choices:
-                    print("{} - {}".format(choice[0], choice[1]))
+                    print("{} - {}".format(choice[0], choice[1]),end="")
+                print("\n")
         else:
             init(sys.argv[1])
     else:   # len(sys.argv) == 2
