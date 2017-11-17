@@ -1,6 +1,9 @@
 # Choose your own adventure game
 # Nyhilo, Nov 2017
 
+###########
+# Classes #
+###########
 class Node(object):
     def __init__(self, script, choices):
         """
@@ -30,28 +33,52 @@ class Node(object):
             quit()
 
 
+#############
+# Functions #
+#############
+
 def loadnodes(filename):
     file = []
     with open(filename, 'r') as f:
         file = f.readlines()
 
     nodedict = dict()
-    firstnode = file[0].split(' ', 1)[0][:-1]
-    while len(file)>0:
-        item = file.pop(0).split(' ', 1)
-        if item != ['\n']: # Indicates newline that we can skip
-            title, text = item[0][:-1], item[1]
-            choicelist = []
-            try:
-                item = file.pop(0).split(' ', 1)
-                while item != ['\n']:   # Newline that shows end of that section
-                    choicelist.append([item[0][:-1], item[1]])
-                    item = file.pop(0).split(' ', 1)
-            except (IndexError):
-                nodedict[title] = Node(text, choicelist)
+    firstnode = file[0].lstrip().split(' ', 1)[0][:-1]   # Marks the label of the first node
 
-            nodedict[title] = Node(text, choicelist)
+    # Load each block as a node
+    while len(file) > 0:
+        # Pops the first line of a block, this is the Node's label and text
+        line = file.pop(0)
+
+        #Looks to see if the next line is indented, if there is a next line
+        if len(file) > 0:
+            if file[0][:1] == "\t":
+                line = line + file.pop(0)[1:]
+            elif file[0][:4] == "    ":
+                line = line + file.pop(0)[4:]
+
+        # Cleans up the leading whitespace leftover then splits the line into an array of the format [label, text]
+        line = line.lstrip().split(' ', 1)
+
+        # Looks to see if the popped line has text in it, if not we can skip to the next line
+        if line != ['\n']:
+            # Strips the last character from the label
+            label, text = line[0][:-1], line[1]
+
+            # Empty choice list to be populated
+            choicelist = []
+
+            try:
+                line = file.pop(0).lstrip().split(' ', 1)
+                while line != ['\n']:   # Newline that shows end of that section
+                    choicelist.append([line[0][:-1], line[1]])
+                    line = file.pop(0).lstrip().split(' ', 1)
+            except (IndexError):
+                nodedict[label] = Node(text, choicelist)
+
+            nodedict[label] = Node(text, choicelist)
     return nodedict, firstnode
+
 
 def clear(error=""):
     import platform
@@ -62,6 +89,19 @@ def clear(error=""):
         _=os.system('clear')
 
     if error: print(error)
+
+###########
+# Globals #
+###########
+
+Usage = """
+        \n\tUsage: [py|python3] adven.py [FILENAME] <-d |-debug>\n
+        The -debug argument will print a list of all nodes in the source file.
+        """
+
+########
+# Main #
+########
 
 def init(filename):
     nodedict, firstnode = loadnodes(filename)
@@ -77,10 +117,6 @@ def init(filename):
             clear(error="-----\nIncorrect entry, try again...")
         print("-----")
 
-Usage = """
-        \n\tUsage: [py|python3] adven.py [FILENAME] <-d |-debug>\n
-        The -debug argument will print a list of all nodes in the source file.
-        """
 
 def main():
     import sys
