@@ -22,7 +22,8 @@ class Node(object):
         elif len(self.choices) == 1:
             print(self.choices[0][1], end="\n")
         else:
-            print("Game Over.")
+            print("\nGame Over.")
+        print("> ", end='')
 
     def choose(self, userinput):
         if len(self.choices) == 1:
@@ -45,10 +46,13 @@ def loadnodes(filename):
     nodedict = dict()
     firstnode = file[0].lstrip().split(' ', 1)[0][:-1]   # Marks the label of the first node
 
+    linecount = 0
+
     # Load each block as a node
     while len(file) > 0:
         # Pops the first line of a block, this is the Node's label and text
         line = file.pop(0)
+        linecount += 1
 
         #Looks to see if the next line is indented, if there is a next line
         indent = True
@@ -56,8 +60,10 @@ def loadnodes(filename):
             if len(file) > 0:
                 if file[0][:1] == "\t":
                     line = line + file.pop(0)[1:]
+                    linecount += 1
                 elif file[0][:4] == "    ":
                     line = line + file.pop(0)[4:]
+                    linecount += 1
                 else: indent = False
             else: indent = False
 
@@ -69,15 +75,25 @@ def loadnodes(filename):
             # Strips the last character from the label
             label, text = line[0][:-1], line[1]
 
+            if label in nodedict:
+                print("Duplicate Label detected on line {}. Overwriting previous...".format(linecount))
+
             # Empty choice list to be populated
             choicelist = []
 
             try:
+                # List all subsequent lines as choices until we find a newline
                 line = file.pop(0).lstrip().split(' ', 1)
-                while line != ['\n']:   # Newline that shows end of that section
+                linecount += 1
+
+                while line != ['']:   # Newline that shows end of that block
                     choicelist.append([line[0][:-1], line[1]])
-                    line = file.pop(0).lstrip().split(' ', 1)
-            except (IndexError):
+                    if len(file) > 0:   # Tells us if we are at the end of the file
+                        line = file.pop(0).lstrip().split(' ', 1)
+                        linecount += 1
+            except IndexError:
+                    print("IndexError at {}".format(line))
+            finally:
                 nodedict[label] = Node(text, choicelist)
 
             nodedict[label] = Node(text, choicelist)
@@ -133,7 +149,7 @@ def main():
             for key, node in nodedict.items():
                 print("Node Name: {}\nText: {}Choices:".format(key, node.script))
                 for choice in node.choices:
-                    print("{} - {}".format(choice[0], choice[1]),end="")
+                    print("{} - {}".format(choice[0], choice[1]),end='')
                 print("\n")
         else:
             init(sys.argv[1])
