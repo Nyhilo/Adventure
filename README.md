@@ -16,8 +16,9 @@ A sample file is below.
 
 ```
 Intro: This is the first label. It is the label that would be shown to the reader first
-        This is an indented continuation of the first label. It has 8 spaces in front of it, 4 of which will be stripped off when displayed.
-        This is also part of the indentation.
+        These lines are an indented continuation of the first label.
+        They have 8 spaces in front of them,
+        4 of which will be stripped off when displayed.
 c1. This choice leads to the label 'c1' below
 c2. This choice leads to the label 'c2' below
 

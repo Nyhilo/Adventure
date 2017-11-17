@@ -51,11 +51,15 @@ def loadnodes(filename):
         line = file.pop(0)
 
         #Looks to see if the next line is indented, if there is a next line
-        if len(file) > 0:
-            if file[0][:1] == "\t":
-                line = line + file.pop(0)[1:]
-            elif file[0][:4] == "    ":
-                line = line + file.pop(0)[4:]
+        indent = True
+        while(indent):
+            if len(file) > 0:
+                if file[0][:1] == "\t":
+                    line = line + file.pop(0)[1:]
+                elif file[0][:4] == "    ":
+                    line = line + file.pop(0)[4:]
+                else: indent = False
+            else: indent = False
 
         # Cleans up the leading whitespace leftover then splits the line into an array of the format [label, text]
         line = line.lstrip().split(' ', 1)
