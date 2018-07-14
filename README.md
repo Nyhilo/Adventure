@@ -7,7 +7,7 @@ This script allows for the creation of dynamic choose-your-own-adventure style s
 
 The file for the story supports an uncapped number of choices per prompts, as well as multiline prompts.
 Prompts are split into blocks separated by newlines. The first line in the block is the prompt label and the prompt itself, separated by a separating character (such as a colon, semicolon, period, etc.) and a single space.
-The writer has flaxibility with what separating character to use, but there must be one.
+The writer has flexibility with what separating character to use, but there must be one.
 If the writer wishes to have a multiline prompt, the immediately following line must be indented with a tab or with 4 spaces.
 Subsequent lines are choices for the current prompt.  They consist of the label the choice points to, and the text for the choice.
 When loaded, the program will automatically number the choices, unless there is only one choice in which case the program won't bother numbering it.
